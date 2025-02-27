@@ -2,13 +2,8 @@
 import { SignInButton } from '@clerk/clerk-react';
 import { UserButton } from '@clerk/clerk-react';
 import { useEffect, useState } from 'react';
-// import Link from 'next/link';
-// import { Outfit } from 'next/font/google';
-
-// const outfit = Outfit({ subsets: ['latin'] });
-
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const Navbar = ({ session, isSignedIn }: { session: any, isSignedIn: boolean }) => {
+const Navbar = ({ session, isSignedIn, isAdmin }: { session: any, isSignedIn: boolean, isAdmin: boolean }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   useEffect(() => {
     console.log(session);
@@ -29,16 +24,18 @@ const Navbar = ({ session, isSignedIn }: { session: any, isSignedIn: boolean }) 
           </a>
 
           <div className="hidden md:flex items-center gap-8">
-            <a
-              href="/admin"
-              className="relative group py-2"
-            >
-              <span className="text-slate-300 text-sm font-medium tracking-wide group-hover:text-white transition-colors">
-                Admin
-              </span>
-              <span className="absolute inset-x-0 -bottom-px h-px bg-gradient-to-r from-teal-500/0 via-teal-500/70 to-teal-500/0 
-                            scale-x-0 group-hover:scale-x-100 transition-transform duration-500 ease-out" />
-            </a>
+            {isAdmin && (
+              <a
+                href="/admin"
+                className="relative group py-2"
+              >
+                <span className="text-slate-300 text-sm font-medium tracking-wide group-hover:text-white transition-colors">
+                  Admin
+                </span>
+                <span className="absolute inset-x-0 -bottom-px h-px bg-gradient-to-r from-teal-500/0 via-teal-500/70 to-teal-500/0 
+                              scale-x-0 group-hover:scale-x-100 transition-transform duration-500 ease-out" />
+              </a>
+            )}
             <a
               href="/create-room"
               className="relative group py-2"
@@ -51,7 +48,7 @@ const Navbar = ({ session, isSignedIn }: { session: any, isSignedIn: boolean }) 
             </a>
             
             <div className="flex items-center gap-6 pl-6 border-l border-slate-700/50">
-              <button className="text-sm font-medium text-slate-300 relative group pt-2">
+              <div className="text-sm font-medium text-slate-300 relative group pt-2">
                 <span className="relative z-10 group-hover:text-transparent group-hover:bg-gradient-to-r 
                                group-hover:from-teal-400 group-hover:to-cyan-400 group-hover:bg-clip-text 
                                transition-all duration-300">
@@ -59,7 +56,7 @@ const Navbar = ({ session, isSignedIn }: { session: any, isSignedIn: boolean }) 
                 </span>
                 <span className="absolute inset-x-0 -bottom-px h-px bg-gradient-to-r from-teal-500/0 via-teal-500/70 to-teal-500/0 
                               scale-x-0 group-hover:scale-x-100 transition-transform duration-500 ease-out" />
-              </button>
+              </div>
               <button className="px-4 py-2 text-sm font-medium relative group">
                 <div className="absolute inset-0 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-lg opacity-80 
                               group-hover:opacity-100 transition-opacity duration-300" />
@@ -87,13 +84,15 @@ const Navbar = ({ session, isSignedIn }: { session: any, isSignedIn: boolean }) 
           } overflow-hidden`}
         >
           <div className="py-6 space-y-4 border-t border-white/[0.08] flex flex-col items-center">
-            <a
-              href="/admin"
-              className="block px-4 py-2.5 text-slate-200 hover:text-white 
-                       hover:bg-white/[0.03] rounded-lg transition-colors tracking-wide"
-            >
-              Admin
-            </a>
+            {isAdmin && (
+              <a
+                href="/admin"
+                className="block px-4 py-2.5 text-slate-200 hover:text-white 
+                         hover:bg-white/[0.03] rounded-lg transition-colors tracking-wide"
+              >
+                Admin
+              </a>
+            )}
             <a
               href="/create-room"
               className="block px-4 py-2.5 text-slate-200 hover:text-white 
@@ -102,9 +101,9 @@ const Navbar = ({ session, isSignedIn }: { session: any, isSignedIn: boolean }) 
               Create Room
             </a>
             <div className="flex flex-col gap-3 pt-4">
-              <button className="w-full px-4 py-2.5 text-white hover:bg-white/[0.03] rounded-lg transition-colors">
+              <div className="w-full px-4 py-2.5 text-white hover:bg-white/[0.03] rounded-lg transition-colors">
                 {isSignedIn ? <div className='flex items-center gap-2 justify-center'><UserButton /> {session.user.emailAddresses[0].emailAddress} </div> : <SignInButton />}
-              </button>
+              </div>
               <button className="w-full px-4 py-2.5 text-white bg-gradient-to-r from-teal-500 to-cyan-500 rounded-lg">
                 Create Room
               </button>
