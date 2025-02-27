@@ -1,15 +1,35 @@
 'use client'
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import gsap from 'gsap';
 import ScrollTrigger from 'gsap/ScrollTrigger';
 
 const Hero = () => {
-  const heroRef = useRef(null);
-  const titleRef = useRef(null);
-  const contentRef = useRef(null);
-
   useEffect(() => {
+    // Move DNA elements creation to client-side only
+    const createDNAElements = () => {
+      const dnaContainer = document.querySelector('.dna-container');
+      if (!dnaContainer) return;
+      
+      // Clear existing DNA elements
+      dnaContainer.innerHTML = '';
+      
+      // Create DNA elements client-side
+      for (let i = 0; i < 6; i++) {
+        const dna = document.createElement('div');
+        dna.className = 'floating-dna absolute w-64 h-64 opacity-20';
+        dna.style.left = `${Math.random() * 100}%`;
+        dna.style.top = `${Math.random() * 100}%`;
+        dna.style.background = `radial-gradient(circle, ${
+          i % 2 === 0 ? 'rgba(45, 212, 191, 0.1)' : 'rgba(56, 189, 248, 0.1)'
+        } 0%, transparent 70%)`;
+        dnaContainer.appendChild(dna);
+      }
+    };
+
     gsap.registerPlugin(ScrollTrigger);
+    
+    // Create DNA elements before starting animations
+    createDNAElements();
     
     // Set initial states to prevent flash of unstyled content
     gsap.set(".feature-card", {
@@ -31,18 +51,6 @@ const Hero = () => {
       defaults: {
         ease: "power3.out"
       }
-    });
-
-    // DNA animation
-    gsap.to(".floating-dna", {
-      y: "random(-20, 20)",
-      x: "random(-20, 20)",
-      rotation: "random(-10, 10)",
-      duration: "random(2, 4)",
-      repeat: -1,
-      yoyo: true,
-      ease: "sine.inOut",
-      stagger: 0.1
     });
 
     // Main content animation
@@ -78,22 +86,10 @@ const Hero = () => {
   }, []);
 
   return (
-    <section className="relative min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 overflow-hidden pt-28">
+    <section className="relative  bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 overflow-hidden pt-10">
       {/* Decorative Elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        {[...Array(6)].map((_, i) => (
-          <div
-            key={i}
-            className="floating-dna absolute w-64 h-64 opacity-20"
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              background: `radial-gradient(circle, ${
-                i % 2 === 0 ? 'rgba(45, 212, 191, 0.1)' : 'rgba(56, 189, 248, 0.1)'
-              } 0%, transparent 70%)`
-            }}
-          />
-        ))}
+      <div className="absolute inset-0 overflow-hidden dna-container">
+        {/* DNA elements will be created by JavaScript */}
       </div>
 
       <div className="max-w-7xl mx-auto px-6">
