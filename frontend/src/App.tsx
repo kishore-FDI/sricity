@@ -4,8 +4,7 @@ import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import { useEffect, useState } from "react";
 import Admin from "./components/Admin";
-
-const Room = () => <div className="p-4">Room Page</div>;
+import Room from "./components/Room";
 
 const ProtectedAdminRoute = ({ isAdmin, isLoading }: { isAdmin: boolean; isLoading: boolean }) => {
   const location = useLocation();
@@ -13,16 +12,25 @@ const ProtectedAdminRoute = ({ isAdmin, isLoading }: { isAdmin: boolean; isLoadi
   if (isLoading) {
     return <div>Checking permissions...</div>;
   }
-
-  console.log('Admin check:', { isAdmin, isLoading });
   
   if (!isAdmin) {
-    console.log('Access denied: User is not admin');
     return <Navigate to="/" state={{ from: location }} replace />;
   }
-  
-  console.log('Access granted: User is admin');
   return <Admin />;
+};
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const ProtectedRoomRoute = ({ loginStatus, isLoading,session }: { loginStatus: string; isLoading: boolean,session:any }) => {
+  const location = useLocation();
+  
+  if (isLoading) {
+    return <div>Checking permissions...</div>;
+  }
+  
+  if (loginStatus !== 'approved') {
+    return <Navigate to="/" state={{ from: location }} replace />;
+  }
+  return <Room session={session} />;
 };
 
 export default function App() {
@@ -33,8 +41,7 @@ export default function App() {
 
   useEffect(() => {
     if (session) {
-      setIsCheckingAdmin(true); // Start loading
-      console.log('Fetching session data...');
+      setIsCheckingAdmin(true); 
       fetch('http://localhost:5000/session', {
         method: 'POST',
         headers: {
@@ -44,10 +51,8 @@ export default function App() {
       })
       .then(res => res.json())
       .then(data => {
-        console.log('Server response:', data);
         setLoginStatus(data.Login ? 'approved' : 'waitlist');
         setIsAdmin(Boolean(data.isAdmin));
-        console.log('Setting isAdmin to:', Boolean(data.isAdmin));
       })
       .catch(error => {
         console.error('Error fetching session:', error);
@@ -57,7 +62,6 @@ export default function App() {
       });
     }
   }, [session]);
-
   useEffect(() => {
     console.log('Current auth state:', {
       isLoaded,
@@ -98,9 +102,7 @@ export default function App() {
             />
             <Route 
               path="/room" 
-              element={
-                loginStatus === 'approved' ? <Room /> : <Navigate to="/" replace />
-              } 
+              element={<ProtectedRoomRoute loginStatus={loginStatus} isLoading={isCheckingAdmin} session={session}/>}
             />
           </Routes>
         )}

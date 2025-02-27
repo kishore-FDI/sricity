@@ -3,11 +3,13 @@ from flask_cors import CORS
 from pymongo import MongoClient
 from dotenv import load_dotenv
 import os
+import qrcode
+import base64
+from io import BytesIO
+import uuid
 
-# Load environment variables
 load_dotenv()
 
-# Get MongoDB connection string from environment variables
 mongodb_uri = os.getenv('MONGODB_URI')
 if not mongodb_uri:
     raise ValueError("MongoDB test URI not found in environment variables")
@@ -16,6 +18,7 @@ if not mongodb_uri:
 client = MongoClient(mongodb_uri)
 db = client.MediScript
 users_collection = db.Users
+rooms_collection = db.Rooms 
 
 app = Flask(__name__)
 CORS(app)
@@ -30,7 +33,6 @@ def check_user_status(email):
     })
     
     if not user:
-        # Create new user with default permissions
         new_user = {
             "email": email,
             "isAdmin": False,
@@ -39,7 +41,6 @@ def check_user_status(email):
         users_collection.insert_one(new_user)
         return False, False, False
     
-    # Check both possible formats for admin status
     is_admin = (
         user.get('isAdmin', False) or
         user.get('"isAdmin"', '').lower() == 'true'
@@ -66,10 +67,39 @@ def index():
 def get_users():
     """Get all users for admin panel."""
     users = list(users_collection.find())
-    # Convert ObjectId to string for JSON serialization
     for user in users:
         user['_id'] = str(user['_id'])
     return jsonify(users)
+
+
+@app.route('/create-room', methods=['POST'])
+def create_room():
+    data = request.get_json()
+    email = data.get('session')
+    room_name = data.get('roomName')
+
+    if not email or not room_name:
+        return jsonify({'error': 'Missing required fields'}), 400
+
+    # Generate a unique room ID
+    room_id = str(uuid.uuid4())
+
+    # Generate QR code with room ID
+    qr = qrcode.make(room_id)
+    buffer = BytesIO()
+    qr.save(buffer, format="PNG")
+    qr_base64 = base64.b64encode(buffer.getvalue()).decode('utf-8')
+
+    # Store in MongoDB
+    room_data = {
+        "roomID": room_id,
+        "roomName": room_name,
+        "email": email,
+        "qrCode": qr_base64  # Optional: Store QR in DB if needed
+    }
+    rooms_collection.insert_one(room_data)
+
+    return jsonify({'message': 'Room created successfully', 'roomID': room_id, 'qrCode': qr_base64})
 
 @app.route('/users/<email>', methods=['PUT'])
 def update_user(email):
