@@ -51,7 +51,7 @@ const Navbar = ({ session, isSignedIn }: { session: any, isSignedIn: boolean }) 
             </a>
             
             <div className="flex items-center gap-6 pl-6 border-l border-slate-700/50">
-              <button className="text-sm font-medium text-slate-300 relative group py-2">
+              <button className="text-sm font-medium text-slate-300 relative group pt-2">
                 <span className="relative z-10 group-hover:text-transparent group-hover:bg-gradient-to-r 
                                group-hover:from-teal-400 group-hover:to-cyan-400 group-hover:bg-clip-text 
                                transition-all duration-300">
