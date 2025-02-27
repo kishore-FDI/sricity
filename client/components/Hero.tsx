@@ -86,7 +86,7 @@ const Hero = () => {
   }, []);
 
   return (
-    <section className="relative  bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 overflow-hidden pt-10">
+    <section className="relative md:h-auto h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 overflow-hidden pt-10">
       {/* Decorative Elements */}
       <div className="absolute inset-0 overflow-hidden dna-container">
         {/* DNA elements will be created by JavaScript */}
@@ -129,7 +129,7 @@ const Hero = () => {
         </div>
 
         {/* Feature Cards Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 relative z-10">
+        <div className="hidden md:grid-cols-2 lg:grid-cols-4 gap-6 relative z-10">
           {[
             {
               icon: "🎙️",
