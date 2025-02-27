@@ -1,13 +1,13 @@
 'use client'
 import { SignInButton } from '@clerk/clerk-react';
 import { UserButton } from '@clerk/clerk-react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const Navbar = ({ session, isSignedIn, isAdmin }: { session: any, isSignedIn: boolean, isAdmin: boolean }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  useEffect(() => {
-    console.log(session);
-  }, [session]);
+  // useEffect(() => {
+  //   console.log(session);
+  // }, [session]);
 
   return (
     <nav className={`fixed w-full z-50 transition-all duration-500`}>
@@ -37,7 +37,7 @@ const Navbar = ({ session, isSignedIn, isAdmin }: { session: any, isSignedIn: bo
               </a>
             )}
             <a
-              href="/create-room"
+              href="/room"
               className="relative group py-2"
             >
               <span className="text-slate-300 text-sm font-medium tracking-wide group-hover:text-white transition-colors">
